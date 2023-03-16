@@ -7,5 +7,5 @@ export function UserList({users}) {
            <UserItem key={user.id} name={user.name}  email={user.email} />
         ))}
         </div>
-    );
+    )
 }

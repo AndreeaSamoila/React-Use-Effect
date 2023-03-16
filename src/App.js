@@ -4,6 +4,9 @@ import { ScrollInfo } from "./components/ScrollInfo";
 import { UserItem } from "./components/UserItem";
 import { UserList } from "./components/UserList";
 import { getUsers } from "./services/user";
+import {getPosts} from "./services/post";
+import {PostItem} from "./components/PostItem";
+import {PostList} from "./components/PostList";
 
 const users = [
   {
@@ -26,7 +29,12 @@ const users = [
 function App() {
   const [contor, setContor] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
+
   const [apiUsers, setApiUsers] = useState([]);
+  const [showUsers, setShowUsers] = useState(false);
+
+  const [apiPosts, setApiPosts] = useState([]);
+  const [showPosts, setShowPosts] = useState(false);
 
   const [pare, setPare] = useState(0);
   const [array, setArray] = useState([1, 2, 3]);
@@ -53,6 +61,13 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    getPosts().then((data) => {
+      setApiPosts(data);
+    });
+
+  }, []);
+
   function handleToggleDropdown() {
     setShowDropdown((showDropdown) => !showDropdown);
   }
@@ -63,6 +78,13 @@ function App() {
   function handleAddNumbers() {
     // 1. Sa se adauge un numar in plus la finalul listei
     setArray([...array, array[array.length - 1] + 1]);
+  }
+  function handleDisplayUsers() {
+    setShowUsers(!showUsers);
+  }
+
+  function handleDisplayPosts() {
+    setShowPosts(!showPosts);
   }
 
   return (
@@ -78,7 +100,25 @@ function App() {
       <button onClick={handleToggleDropdown}>
         {showDropdown ? "Hide" : "Show"}
       </button>
+
       {showDropdown && <div>Dropdown present</div>}
+      {showDropdown && <ScrollInfo />}
+
+      {/*solution 1 */}
+
+      <button onClick={handleDisplayUsers}>{showUsers ? "Hide Users List" : "Display Users List" }</button>
+      <button onClick={handleDisplayPosts}>{showPosts ? "Hide Posts List" : "Display Posts List"}</button>
+
+      {showUsers &&  <UserList users={apiUsers} />}
+      {showPosts && <PostList posts={apiPosts} />}
+
+      {/*solution 2  */}
+
+      {/*<button onClick={handleDisplayUsers}>Display the users</button>*/}
+      {/*<button onClick={handleDisplayPosts}>Display the posts</button>*/}
+
+      {/*{showUsers ? <UserList users={apiUsers} /> : 'Users are not displayed ' }*/}
+      {/*{showPosts ? <PostList posts={apiPosts} /> : 'Posts are not displayed' }*/}
 
       {users.map((user, index) => {
         return (
@@ -90,13 +130,13 @@ function App() {
           />
         );
       })}
-      {showDropdown && <ScrollInfo />}
-      <UserList users={apiUsers} />
+
       <p>In array exista {pare} elemente pare</p>
       {array.map((nr) => (
         <p key={nr}>{nr}</p>
       ))}
       <button onClick={handleAddNumbers}>Add Numbers</button>
+
     </div>
   );
 }
